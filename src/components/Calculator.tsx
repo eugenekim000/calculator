@@ -111,7 +111,7 @@ export default function Calculator({}: Props): ReactElement {
       <div className="calculator-buttons">
         <button></button>
         <button onClick={() => handleClear()}>C</button>
-        <button onClick={() => handleBackspace()}>x</button>
+        <button onClick={() => handleBackspace()}>{"<--"}</button>
         <button onClick={() => handleOperationInput("/")}>÷</button>
         <button onClick={() => handleNumberInput("7")}>7</button>
         <button onClick={() => handleNumberInput("8")}>8</button>
