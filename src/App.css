@@ -1,0 +1,39 @@
+.app-container {
+  display: flex;
+  background-color: rgb(230, 230, 230);
+  height: 100vh;
+}
+
+.calculator {
+  display: flex;
+  flex: 2 1 auto;
+  border: 1px solid black;
+  flex-direction: column;
+  height: 100vh;
+}
+.history {
+  flex: 1 1 auto;
+}
+
+.calculator-header {
+  height: 100px;
+  font-size: xxx-large;
+}
+
+.calculator-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  height: 100%;
+}
+
+.calculator-buttons button {
+  background-color: white;
+}
+
+.calculator-buttons button:nth-child(-n + 4) {
+  background-color: rgb(241, 241, 241);
+}
+
+.calculator-buttons button:nth-child(4n) {
+  background-color: rgb(241, 241, 241);
+}
