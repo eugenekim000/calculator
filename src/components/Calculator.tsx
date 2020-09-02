@@ -1,4 +1,6 @@
 import React, { ReactElement, useState } from "react";
+import { fireStoreDB } from "../firebase";
+import firebase from "firebase";
 
 interface Props {}
 
@@ -16,7 +18,7 @@ export default function Calculator({}: Props): ReactElement {
   const [operatorStack, setOperatorStack] = useState<string[]>([]);
   const [numberStack, setNumberStack] = useState<string[]>([]);
   const [result, setResult] = useState("");
-  const [history, setHistory] = useState<string[]>([]);
+  const [history, setHistory] = useState<string>("");
 
   const handleNumberInput = (numString: string) => {
     setResult("");
@@ -32,7 +34,7 @@ export default function Calculator({}: Props): ReactElement {
     setOperatorStack([]);
     setNumberStack([]);
     setResult("");
-    setHistory([]);
+    setHistory("");
   };
 
   const handleInverse = () => {
@@ -48,7 +50,7 @@ export default function Calculator({}: Props): ReactElement {
   const handleOperationInput = (operator: string) => {
     //when user clicks a operation mulitple times before selecting a new number
     if (operatorStack.length > 1) {
-      setHistory((prevState) => [...prevState.slice(0, -1), operator]);
+      setHistory((prevState) => prevState.slice(0, -1) + " " + operator + " ");
       setOperatorStack([operator]);
       return;
     }
@@ -59,7 +61,9 @@ export default function Calculator({}: Props): ReactElement {
       let number1 = Number(numberStack[0]);
       let number2 = Number(headerNumber);
       let newNumber = opTable[operatorStack[0]](number1, number2).toString();
-      setHistory((prevState) => [...prevState, headerNumber, operator]);
+      setHistory(
+        (prevState) => prevState + " " + headerNumber + " " + operator + " "
+      );
       setHeaderNumber("");
       setOperatorStack([operator]);
       setNumberStack([newNumber]);
@@ -68,7 +72,7 @@ export default function Calculator({}: Props): ReactElement {
       console.log(3);
 
       //number or prev operator hasnt been selected yet
-      setHistory([headerNumber, operator]);
+      setHistory(headerNumber + " " + operator + " ");
       setNumberStack([headerNumber]);
       setOperatorStack([operator]);
       setHeaderNumber("");
@@ -78,16 +82,23 @@ export default function Calculator({}: Props): ReactElement {
   };
 
   const handleEqual = () => {
-    if (operatorStack.length) {
+    const currentTime = firebase.firestore.Timestamp.now();
+
+    if (operatorStack.length && history) {
       let number1 = Number(numberStack[0]);
       let number2 = Number(headerNumber);
       let newNumber = opTable[operatorStack[0]](number1, number2).toString();
+      let finalHistory =
+        history + " " + headerNumber + " " + "=" + " " + newNumber;
+      fireStoreDB
+        .collection("equation-history")
+        .add({ timestamp: currentTime, equation: finalHistory });
 
       setHeaderNumber(newNumber);
       setOperatorStack([]);
       setNumberStack([newNumber]);
       setResult(newNumber);
-      setHistory([]);
+      setHistory("");
     }
   };
 
