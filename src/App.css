@@ -2,22 +2,30 @@
   display: flex;
   background-color: rgb(230, 230, 230);
   height: 100vh;
+  overflow: hidden;
 }
 
 .calculator {
   display: flex;
-  flex: 2 1 auto;
+  width: 70%;
   border: 1px solid black;
   flex-direction: column;
   height: 100vh;
+  overflow: hidden;
 }
 .history {
+  width: 30%;
   flex: 1 1 auto;
+  overflow: auto;
 }
 
 .calculator-header {
   height: 100px;
   font-size: xxx-large;
+  text-align: right;
+  margin-right: 20px;
+  padding-bottom: 40px;
+  overflow: auto;
 }
 
 .calculator-buttons {
