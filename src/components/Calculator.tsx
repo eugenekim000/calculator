@@ -4,17 +4,19 @@ interface Props {}
 
 const opTable: { [key: string]: (arg1: number, arg2: number) => number } = {
   "/": (num1: number, num2: number) => num1 / num2,
+  x: (num1: number, num2: number) => num1 * num2,
   "+": (num1: number, num2: number) => num1 + num2,
   "-": (num1: number, num2: number) => num1 - num2,
-  x: (num1: number, num2: number) => num1 * num2,
 };
+
+const operationArray = ["/", "+", "-", "x"];
 
 export default function Calculator({}: Props): ReactElement {
   const [headerNumber, setHeaderNumber] = useState("");
   const [operatorStack, setOperatorStack] = useState<string[]>([]);
   const [numberStack, setNumberStack] = useState<string[]>([]);
   const [result, setResult] = useState("");
-  //todo add a history state.
+  const [history, setHistory] = useState<string[]>([]);
 
   const handleNumberInput = (numString: string) => {
     setResult("");
@@ -30,6 +32,7 @@ export default function Calculator({}: Props): ReactElement {
     setOperatorStack([]);
     setNumberStack([]);
     setResult("");
+    setHistory([]);
   };
 
   const handleInverse = () => {
@@ -43,15 +46,29 @@ export default function Calculator({}: Props): ReactElement {
   };
 
   const handleOperationInput = (operator: string) => {
-    if (numberStack.length & operatorStack.length) {
+    //when user clicks a operation mulitple times before selecting a new number
+    if (operatorStack.length > 1) {
+      setHistory((prevState) => [...prevState.slice(0, -1), operator]);
+      setOperatorStack([operator]);
+      return;
+    }
+
+    //if we have number and operations execute
+    if (numberStack.length && operatorStack.length && headerNumber) {
+      console.log(2);
       let number1 = Number(numberStack[0]);
       let number2 = Number(headerNumber);
       let newNumber = opTable[operatorStack[0]](number1, number2).toString();
+      setHistory((prevState) => [...prevState, headerNumber, operator]);
       setHeaderNumber("");
       setOperatorStack([operator]);
       setNumberStack([newNumber]);
       setResult(newNumber);
-    } else {
+    } else if (headerNumber) {
+      console.log(3);
+
+      //number or prev operator hasnt been selected yet
+      setHistory([headerNumber, operator]);
       setNumberStack([headerNumber]);
       setOperatorStack([operator]);
       setHeaderNumber("");
@@ -70,6 +87,7 @@ export default function Calculator({}: Props): ReactElement {
       setOperatorStack([]);
       setNumberStack([newNumber]);
       setResult(newNumber);
+      setHistory([]);
     }
   };
 
