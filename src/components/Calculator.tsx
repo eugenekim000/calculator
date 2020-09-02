@@ -84,12 +84,13 @@ export default function Calculator({}: Props): ReactElement {
   const handleEqual = () => {
     const currentTime = firebase.firestore.Timestamp.now();
 
-    if (operatorStack.length && history) {
+    if (operatorStack.length && numberStack.length && history) {
       let number1 = Number(numberStack[0]);
-      let number2 = Number(headerNumber);
+      let number2 = headerNumber ? Number(headerNumber) : 0;
+
       let newNumber = opTable[operatorStack[0]](number1, number2).toString();
       let finalHistory =
-        history + " " + headerNumber + " " + "=" + " " + newNumber;
+        history + " " + number2.toString() + " " + "=" + " " + newNumber;
       fireStoreDB
         .collection("equation-history")
         .add({ timestamp: currentTime, equation: finalHistory });

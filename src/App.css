@@ -13,9 +13,11 @@
   height: 100vh;
   overflow: hidden;
 }
+
 .history {
   width: 30%;
   flex: 1 1 auto;
+  flex-direction: row;
   overflow: auto;
 }
 
@@ -38,10 +40,28 @@
   background-color: white;
 }
 
+.calculator-buttons button:hover {
+  filter: brightness(85%);
+}
+
 .calculator-buttons button:nth-child(-n + 4) {
   background-color: rgb(241, 241, 241);
 }
 
 .calculator-buttons button:nth-child(4n) {
   background-color: rgb(241, 241, 241);
+}
+
+.history-item {
+  text-align: right;
+  padding: 10px 10px 10px 0px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-weight: lighter;
+  font-size: 14px;
+}
+
+.history-answer {
+  float: right;
+  font-weight: 600;
 }

@@ -1,10 +1,16 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import { fireStoreDB } from "../firebase";
+import { motion } from "framer-motion";
 
 interface Props {}
 
+interface FirebaseEquationHistory {
+  id: number;
+  equation: string;
+}
+
 export default function History({}: Props): ReactElement {
-  const [equationArray, setEquationArray] = useState<string[]>([]);
+  const [equationArray, setEquationArray] = useState<any>([]);
 
   useEffect(() => {
     const unsubscribe = fireStoreDB
@@ -12,18 +18,31 @@ export default function History({}: Props): ReactElement {
       .orderBy("timestamp", "desc")
       .limit(10)
       .onSnapshot((snapshot) => {
-        setEquationArray(snapshot.docs.map((doc) => doc.data().equation));
+        setEquationArray(
+          snapshot.docs.map((doc) => {
+            return { equation: doc.data().equation, id: doc.id };
+          })
+        );
       });
 
     return () => unsubscribe();
   }, []);
 
-  let testArray = ["1+1", "2+4", "4+2"];
   return (
     <div className="history">
-      {equationArray.map((equation) => (
-        <div className="history-item">{equation}</div>
-      ))}
+      {equationArray.map((data: FirebaseEquationHistory) => {
+        const { equation, id } = data;
+        const equalIndex = equation.indexOf("=");
+        const slicedEquation = equation.slice(0, equalIndex + 1);
+        const slicedAnswer = equation.slice(equalIndex + 2);
+
+        return (
+          <motion.div className="history-item" key={id} layout>
+            <div>{slicedEquation}</div>
+            <div className="history-answer">{slicedAnswer}</div>
+          </motion.div>
+        );
+      })}
     </div>
   );
 }
